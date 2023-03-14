@@ -15,7 +15,6 @@ class BenchMarker:
         self.name = name
         self.function = function
         self.averages = []
-        self.function_result = None
 
     # Runs a full benchmark over the function, this benchmark provides inputs for the function.
     # in our case the inputs can be filled in with opencv images
