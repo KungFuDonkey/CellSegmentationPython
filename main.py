@@ -4,6 +4,7 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import cv2 as cv
 import watershed
+import numpy as np
 import opencv_tools
 from benchmarker import BenchMarker
 import tqdm
@@ -56,15 +57,14 @@ def run_tests_for_method(method, method_name, cv_images):
 
 # main()
 if __name__ == '__main__':
-    cv_images = opencv_tools.find_opencv_images('inputImages')
+    cv_images = opencv_tools.find_opencv_images('dataset//rawimages')
+    imshape = np.array(cv_images[0]).shape
 
-    # run multiple tests (right now only return benches)
-    test_results = \
-        [
-            run_tests_for_method(watershed.apply_watershed, 'watershed', cv_images),
-            run_tests_for_method(watershed.apply_watershed, 'watershed', cv_images)
-        ]
-
-    pretty_print_results(test_results)
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    # # run multiple tests (right now only return benches)
+    # test_results = \
+    #     [
+    #         run_tests_for_method(watershed.apply_watershed, 'watershed', cv_images),
+    #         run_tests_for_method(watershed.apply_watershed, 'watershed', cv_images)
+    #     ]
+    #
+    # pretty_print_results(test_results)
