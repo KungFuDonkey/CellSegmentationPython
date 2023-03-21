@@ -1,13 +1,9 @@
-import imageio.v2 as imageio
+
 import tensorflow as tf
 from keras.layers import Input, Conv2D, MaxPooling2D, Dropout, UpSampling2D, concatenate, Concatenate, \
     BatchNormalization, Activation, RandomFlip, RandomRotation, Conv2DTranspose
 from keras.models import Model
-from matplotlib import pyplot as plt
-import opencv_tools
-import numpy as np
-import os
-import cv2 as cv
+
 
 #Miss dat we ook nog de volgende al bestaande implementatie kunnen vergelijken:
 #https://github.com/qubvel/segmentation_models
@@ -15,11 +11,13 @@ import cv2 as cv
 
 # Define the U-Net architecture with pretrained mobileNetV2 weights
 # https://github.com/nikhilroxtomar/Unet-with-Pretrained-Encoder/blob/master/U-Net_with_Pretrained_MobileNetV2_as_Encoder.ipynb
-def pretrained_unet(input_shape=(480, 640, 3), f=None, n_classes=3):
+def pretrained_unet(input_shape=(480, 640, 3), f=None, n_classes=1):
     if f is None:
-        f = [32, 48, 96, 144, 192] #Number of filters per layer in the decoder (reverse order)
+        f = [3, 96, 144, 192] #Number of filters per layer in the decoder (reverse order)
 
-    inputs = tf.keras.Input(shape=input_shape)
+    inputs = tf.keras.Input(shape=input_shape, batch_size=64)
+
+
     x = tf.keras.applications.mobilenet_v2.preprocess_input(inputs)
 
     # Load the pre-trained MobileNetV2 model as the encoder
@@ -53,23 +51,16 @@ def pretrained_unet(input_shape=(480, 640, 3), f=None, n_classes=3):
         x = BatchNormalization()(x)
         x = Activation("relu")(x)
 
-    #Extra convolution at the end as done in the manual model
-    x = Conv2D(f[0], (3, 3), padding='same', kernel_initializer='he_normal')(x)
-    x = BatchNormalization()(x)
-    x = Activation("relu")(x)
+    # #Extra convolution at the end as done in the manual model
+    # x = Conv2D(f[0], (3, 3), padding='same', kernel_initializer='he_normal')(x)
+    # x = BatchNormalization()(x)
+    # x = Activation("relu")(x)
 
-    output = Conv2D(n_classes, (1, 1), padding="same")(x)
+    output = Conv2D(n_classes, (1, 1), padding="same", kernel_initializer='he_normal')(x)
     model = Model(inputs, output) # need to compile with from_logits=True
     return model
 
-#TODO: load and preprocess data
 
-unet = pretrained_unet()
-unet.compile(optimizer='adam',
-             loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-             metrics=['accuracy'])
-unet.summary()
-#model_history = unet.fit(train_dataset, epochs=EPOCHS)
 
 
 
