@@ -1,5 +1,5 @@
-
-from keras.layers import Conv2D, Dropout, MaxPooling2D, Conv2DTranspose, Concatenate, Input
+from keras import  Input
+from keras.layers import Conv2D, Dropout, MaxPooling2D, Conv2DTranspose, concatenate
 import tensorflow as tf
 
 
@@ -66,12 +66,12 @@ def upsampling_block(expansive_input, contractive_input, n_filters=32):
     ### START CODE HERE
     up = Conv2DTranspose(
         n_filters,  # number of filters
-        (3, 3),  # Kernel size
+        kernel_size =(3, 3),
         strides=(2, 2),
-        padding="same")(expansive_input)
+        padding="same", dilation_rate= 1)(expansive_input)
 
     # Merge the previous output and the contractive_input
-    merge = Concatenate([up, contractive_input], axis=3)
+    merge = concatenate([up, contractive_input], axis=3)
     conv = Conv2D(n_filters,  # Number of filters
                   (3, 3),  # Kernel size
                   activation='relu',
@@ -87,7 +87,7 @@ def upsampling_block(expansive_input, contractive_input, n_filters=32):
     return conv
 
 
-def unet_model(input_size=(480, 640, 3), n_filters=32, n_classes=3):
+def unet_model(input_size=(480, 640, 3), n_filters=32, n_classes=1, dropout_prob = 0):
     """
     Unet model
 
@@ -98,7 +98,7 @@ def unet_model(input_size=(480, 640, 3), n_filters=32, n_classes=3):
     Returns:
         model -- tf.keras.Model
     """
-    inputs = Input(input_size)
+    inputs = Input(input_size, batch_size=10)
     # Contracting Path (encoding)
     # Add a conv_block with the inputs of the unet_ model and n_filters
     ### START CODE HERE
@@ -107,9 +107,9 @@ def unet_model(input_size=(480, 640, 3), n_filters=32, n_classes=3):
     # Double the number of filters at each new step
     cblock2 = conv_block(cblock1[0], 2 * n_filters)
     cblock3 = conv_block(cblock2[0], 4 * n_filters)
-    cblock4 = conv_block(cblock3[0], 8 * n_filters, dropout_prob=0.3)  # Include a dropout_prob of 0.3 for this layer
+    cblock4 = conv_block(cblock3[0], 8 * n_filters, dropout_prob=dropout_prob)  # Include a dropout_prob of 0.3 for this layer
     # Include a dropout_prob of 0.3 for this layer, and avoid the max_pooling layer
-    cblock5 = conv_block(cblock4[0], 16 * n_filters, dropout_prob=0.3, max_pooling=False)
+    cblock5 = conv_block(cblock4[0], 16 * n_filters, dropout_prob=dropout_prob, max_pooling=False)
     ### END CODE HERE
 
     # Expanding Path (decoding)
@@ -140,9 +140,3 @@ def unet_model(input_size=(480, 640, 3), n_filters=32, n_classes=3):
 
     return model
 
-unet = unet_model()
-unet.compile(optimizer='adam',
-             loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-             metrics=['accuracy'])
-unet.summary()
-#model_history = unet.fit(train_dataset, epochs=EPOCHS)
