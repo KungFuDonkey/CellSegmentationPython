@@ -60,6 +60,9 @@ if __name__ == '__main__':
     cv_images = opencv_tools.find_opencv_images('dataset//rawimages')
     imshape = np.array(cv_images[0]).shape
 
+    x = opencv_tools.find_opencv_images('dataset/groundtruth')[0]
+    opencv_tools.display_image(x * 255)
+
     # # run multiple tests (right now only return benches)
     # test_results = \
     #     [
