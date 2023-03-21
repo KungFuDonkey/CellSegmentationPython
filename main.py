@@ -19,11 +19,11 @@ from prettytable import PrettyTable
 def pretty_print_results(results):
     print(Fore.GREEN + 'results:' + Fore.RESET)
     print('')
-    table = PrettyTable(['method', 'average', 'mean', 'mean_dev', 'iou'])
-    for bench, iou in results:
+    table = PrettyTable(['method', 'time_avg', 'time_mean', 'time_mean_dev', 'iou_avg', 'iou_mean', 'iou_mean_dev'])
+    for bench, (iou_avg, iou_mean, iou_mean_dev) in results:
         name = bench.name
         avg, mean, mean_dev = bench.get_benchmark_results()
-        table.add_row([name, avg, mean, mean_dev, iou])
+        table.add_row([name, avg, mean, mean_dev, iou_avg, iou_mean, iou_mean_dev])
     print(table)
 
 
@@ -46,7 +46,7 @@ def run_tests_for_method(method, method_name, cv_images, ground_truths):
 
     # run benchmark
     bench = BenchMarker(method, method_name)
-    # bench.run_full_benchmark(cv_images)
+    bench.run_full_benchmark(cv_images)
 
     print('')
 
@@ -55,7 +55,7 @@ def run_tests_for_method(method, method_name, cv_images, ground_truths):
 
     print('')
 
-    iou = intersection_over_union.calculate(result_images[0], ground_truths[0])
+    iou = intersection_over_union.calculate(result_images, ground_truths)
 
     # return bench for pretty printing
     return bench, iou
@@ -64,9 +64,7 @@ def run_tests_for_method(method, method_name, cv_images, ground_truths):
 # main()
 if __name__ == '__main__':
     cv_images = opencv_tools.find_opencv_images('dataset/rawimages')
-    ground_truths = opencv_tools.make_binary_images(opencv_tools.find_opencv_images('dataset/groundtruth'))
-
-    opencv_tools.display_image(ground_truths[0])
+    ground_truths = opencv_tools.make_binary_images(opencv_tools.find_opencv_images('dataset/groundtruth_png'))
 
     # run multiple tests (right now only return benches)
     test_results = \

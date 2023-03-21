@@ -2,6 +2,7 @@ import random
 import time
 import tqdm
 import sys
+import statistics
 
 NUMBER_OF_BENCHMARKS_PER_INPUT = 10
 WARMUP_ROUNDS = 1000
@@ -48,23 +49,4 @@ class BenchMarker:
 
     # gets the results of the benchmark. Returns (avg, mean, mean_dev) in MS
     def get_benchmark_results(self):
-        if len(self.averages) == 0:
-            return 0, 0, 0
-        self.averages.sort()
-
-        averages_length = len(self.averages)
-        half_index = int(len(self.averages) / 2)
-        if averages_length % 2 == 1:
-            mean_completion_time = (self.averages[half_index] + self.averages[half_index + 1]) / 2
-        else:
-            mean_completion_time = self.averages[half_index]
-
-        mean_deviation = 0
-        for average in self.averages:
-            mean_deviation += abs(mean_completion_time - average)
-
-        mean_deviation = mean_deviation / averages_length
-
-        average_completion_time = sum(self.averages) / len(self.averages)
-
-        return average_completion_time, mean_completion_time, mean_deviation
+        return statistics.get_stats(self.averages)
