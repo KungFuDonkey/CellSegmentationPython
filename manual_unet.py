@@ -1,5 +1,5 @@
-from keras import Input
-from keras.layers import Conv2D, Dropout, MaxPooling2D, Conv2DTranspose, Concatenate
+
+from keras.layers import Conv2D, Dropout, MaxPooling2D, Conv2DTranspose, Concatenate, Input
 import tensorflow as tf
 
 

@@ -62,7 +62,7 @@ def pretrained_unet(input_shape=(480, 640, 3), f=None, n_classes=3):
     model = Model(inputs, output) # need to compile with from_logits=True
     return model
 
-#TODO: load and preprocess data 
+#TODO: load and preprocess data
 
 unet = pretrained_unet()
 unet.compile(optimizer='adam',
