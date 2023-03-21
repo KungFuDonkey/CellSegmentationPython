@@ -1,4 +1,7 @@
+import sys
+
 import numpy as np
+import tqdm
 
 import statistics
 
@@ -12,7 +15,9 @@ def calculate_iou(result_image, ground_truth):
 
 def calculate(result_images, ground_truths):
     values = []
-    for i in range(len(result_images)):
+
+    print('calculating iou')
+    for i in tqdm.tqdm(range(len(result_images)), file=sys.stdout):
         values.append(calculate_iou(result_images[i], ground_truths[i]))
 
     return statistics.get_stats(values)

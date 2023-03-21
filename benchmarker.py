@@ -49,4 +49,5 @@ class BenchMarker:
 
     # gets the results of the benchmark. Returns (avg, mean, mean_dev) in MS
     def get_benchmark_results(self):
-        return statistics.get_stats(self.averages)
+        avg, mean, mean_dev = statistics.get_stats(self.averages)
+        return self.name, avg, mean, mean_dev

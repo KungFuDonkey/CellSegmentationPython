@@ -20,10 +20,8 @@ def pretty_print_results(results):
     print(Fore.GREEN + 'results:' + Fore.RESET)
     print('')
     table = PrettyTable(['method', 'time_avg', 'time_mean', 'time_mean_dev', 'iou_avg', 'iou_mean', 'iou_mean_dev'])
-    for bench, (iou_avg, iou_mean, iou_mean_dev) in results:
-        name = bench.name
-        avg, mean, mean_dev = bench.get_benchmark_results()
-        table.add_row([name, avg, mean, mean_dev, iou_avg, iou_mean, iou_mean_dev])
+    for (bench_name, bench_avg, bench_maen, beanch_mean_dev), (iou_avg, iou_mean, iou_mean_dev) in results:
+        table.add_row([bench_name, bench_avg, bench_maen, beanch_mean_dev, iou_avg, iou_mean, iou_mean_dev])
     print(table)
 
 
@@ -47,6 +45,7 @@ def run_tests_for_method(method, method_name, cv_images, ground_truths):
     # run benchmark
     bench = BenchMarker(method, method_name)
     bench.run_full_benchmark(cv_images)
+    bench_result = bench.get_benchmark_results()
 
     print('')
 
@@ -55,10 +54,13 @@ def run_tests_for_method(method, method_name, cv_images, ground_truths):
 
     print('')
 
+    # create iou results
     iou = intersection_over_union.calculate(result_images, ground_truths)
 
+    print('')
+
     # return bench for pretty printing
-    return bench, iou
+    return bench_result, iou
 
 
 # main()
