@@ -29,6 +29,4 @@ def apply_watershed(cv_image):
     markers[unknown == 255] = 0
     markers = cv.watershed(cv_image, markers)
 
-    output_image = cv_image.copy()
-    output_image[markers == -1] = [255, 0, 0]
-    return output_image
+    return ((markers > 3) * 255).astype(int)

@@ -1,5 +1,7 @@
 import cv2 as cv
 import os
+import numpy as np
+
 
 IMAGE_EXPORT_TYPE = '.bmp'
 
@@ -34,3 +36,7 @@ def export_image(cv_image, method_name, image_name):
     image_path = os.path.join(method_folder_path, image_name + IMAGE_EXPORT_TYPE)
 
     cv.imwrite(image_path, cv_image)
+
+
+def make_binary_images(input_images):
+    return [np.float32(np.sum(image, axis=-1) / 3) * 255 for image in input_images]
