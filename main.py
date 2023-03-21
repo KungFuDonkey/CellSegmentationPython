@@ -68,3 +68,7 @@ if __name__ == '__main__':
     #     ]
     #
     # pretty_print_results(test_results)
+
+    # Example on how to apply watershed.
+    # x = watershed.apply_watershed(cv_images[0])
+    # opencv_tools.display_image(x)
