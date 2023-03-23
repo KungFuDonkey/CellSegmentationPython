@@ -70,15 +70,25 @@ def run_tests_for_method(method, method_name, cv_images, ground_truths):
     return bench_result, iou
 
 
+RANDOM_VALIDATION_INDEXES = [6, 18, 22, 39, 46, 53, 66, 77]
+RANDOM_TEST_INDEXES = [3, 12, 25, 37, 43, 54, 60, 76]
+
 # main()
 if __name__ == '__main__':
     cv_images = opencv_tools.find_opencv_images('dataset/rawimages')
     ground_truths = opencv_tools.make_binary_images(opencv_tools.find_opencv_images('dataset/groundtruth_png'))
 
-    # run multiple tests (right now only return benches)
+    test_images = []
+    test_ground_truth = []
+    for index in RANDOM_TEST_INDEXES:
+        test_images.append(cv_images[index])
+        test_ground_truth.append(ground_truths[index])
+
+
+    # run multiple tests
     test_results = \
         [
-            run_tests_for_method(watershed.apply_watershed, 'watershed', cv_images, ground_truths),
-            run_tests_for_method(watershed.apply_watershed, 'watershed', cv_images, ground_truths)
+            run_tests_for_method(watershed.apply_watershed, 'watershed', test_images, test_ground_truth),
+            run_tests_for_method(watershed.apply_watershed, 'watershed full test', cv_images, ground_truths)
         ]
     pretty_print_results(test_results)
