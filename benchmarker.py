@@ -4,7 +4,7 @@ import tqdm
 import sys
 import statistics
 
-NUMBER_OF_BENCHMARKS_PER_INPUT = 10
+NUMBER_OF_BENCHMARKS_PER_INPUT = 1
 WARMUP_ROUNDS = 1000
 
 
@@ -35,14 +35,20 @@ class BenchMarker:
 
     # Runs as benchmark over one input. It was written this way as time can differ for different inputs.
     def run_benchmark_with_input(self, function_input):
-        total_time = 0
-        for i in range(1, NUMBER_OF_BENCHMARKS_PER_INPUT):
+        avg_result = 0
+        if NUMBER_OF_BENCHMARKS_PER_INPUT > 1:
+            total_time = 0
+            for i in range(1, NUMBER_OF_BENCHMARKS_PER_INPUT):
+                start_time = time.time()
+                self.function(function_input)
+                end_time = time.time()
+                total_time += end_time - start_time
+            avg_result = total_time / NUMBER_OF_BENCHMARKS_PER_INPUT
+        else:
             start_time = time.time()
             self.function(function_input)
             end_time = time.time()
-            total_time += end_time - start_time
-
-        avg_result = total_time / NUMBER_OF_BENCHMARKS_PER_INPUT
+            avg_result = end_time - start_time
 
         # multiply by 1000 for MS instead of seconds
         self.averages += [avg_result * 1000]
