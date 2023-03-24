@@ -67,11 +67,11 @@ def upsampling_block(expansive_input, contractive_input, n_filters=32):
     up = Conv2DTranspose(
         n_filters,  # number of filters
         kernel_size =(3, 3),
-        strides=(2, 2),
+        strides=2,
         padding="same", dilation_rate= 1)(expansive_input)
 
     # Merge the previous output and the contractive_input
-    merge = concatenate([up, contractive_input], axis=3)
+    merge = concatenate([up, contractive_input], axis=-1)
     conv = Conv2D(n_filters,  # Number of filters
                   (3, 3),  # Kernel size
                   activation='relu',
@@ -87,7 +87,7 @@ def upsampling_block(expansive_input, contractive_input, n_filters=32):
     return conv
 
 
-def unet_model(input_size=(480, 640, 3), n_filters=32, n_classes=1, dropout_prob = 0):
+def unet_model(input_shape=(480, 640, 3), n_filters=32, n_classes=1, dropout_prob = 0):
     """
     Unet model
 
@@ -98,7 +98,7 @@ def unet_model(input_size=(480, 640, 3), n_filters=32, n_classes=1, dropout_prob
     Returns:
         model -- tf.keras.Model
     """
-    inputs = Input(input_size, batch_size=10)
+    inputs = Input(input_shape)
     # Contracting Path (encoding)
     # Add a conv_block with the inputs of the unet_ model and n_filters
     ### START CODE HERE

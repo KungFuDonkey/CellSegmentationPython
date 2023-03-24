@@ -19,7 +19,7 @@ def find_opencv_images(folder):
 
 # displays an image and waits until you exit the window
 def display_image(cv_image):
-    cv.imshow('', cv_image)
+    cv.imshow('', np.float32(cv_image))
     cv.waitKey(0)
 
 
@@ -39,4 +39,4 @@ def export_image(cv_image, method_name, image_name):
 
 
 def make_binary_images(input_images):
-    return [np.float32(np.sum(image, axis=-1) / 3) * 255 for image in input_images]
+    return [(np.sum(image, axis=-1)>0).astype(int) for image in input_images]

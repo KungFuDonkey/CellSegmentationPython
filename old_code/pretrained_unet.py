@@ -2,26 +2,22 @@
 import tensorflow as tf
 from keras.layers import Input, Conv2D, MaxPooling2D, Dropout, UpSampling2D, concatenate, Concatenate, \
     BatchNormalization, Activation, RandomFlip, RandomRotation, Conv2DTranspose
+from keras.activations import sigmoid
 from keras.models import Model
-
-
-#Miss dat we ook nog de volgende al bestaande implementatie kunnen vergelijken:
-#https://github.com/qubvel/segmentation_models
 
 
 # Define the U-Net architecture with pretrained mobileNetV2 weights
 # https://github.com/nikhilroxtomar/Unet-with-Pretrained-Encoder/blob/master/U-Net_with_Pretrained_MobileNetV2_as_Encoder.ipynb
-def pretrained_unet(input_shape=(480, 640, 3), f=None, n_classes=1):
+def pretrained_unet_model(input_shape=(224,224,3), f=None, n_classes=1):
     if f is None:
-        f = [3, 96, 144, 192] #Number of filters per layer in the decoder (reverse order)
+        f = [32, 96, 144, 192] #Number of filters per layer in the decoder (reverse order)
 
-    inputs = tf.keras.Input(shape=input_shape, batch_size=64)
-
+    inputs = tf.keras.Input(shape=input_shape)
 
     x = tf.keras.applications.mobilenet_v2.preprocess_input(inputs)
 
     # Load the pre-trained MobileNetV2 model as the encoder
-    encoder = tf.keras.applications.MobileNetV2(input_tensor=x, include_top=False, weights='imagenet')
+    encoder = tf.keras.applications.MobileNetV2(input_shape = (224,224,3), input_tensor=x, include_top=False, weights='imagenet')
     # encoder.summary()
     # input_1 (InputLayer)           [(None, 480, 640 ,3)]
     # block_1_expand_relu (ReLU)     (None, 240, 320, 96)
@@ -56,7 +52,8 @@ def pretrained_unet(input_shape=(480, 640, 3), f=None, n_classes=1):
     # x = BatchNormalization()(x)
     # x = Activation("relu")(x)
 
-    output = Conv2D(n_classes, (1, 1), padding="same", kernel_initializer='he_normal')(x)
+    x = Conv2D(n_classes, (1, 1), padding="same", kernel_initializer='he_normal')(x)
+    output = sigmoid(x)
     model = Model(inputs, output) # need to compile with from_logits=True
     return model
 
