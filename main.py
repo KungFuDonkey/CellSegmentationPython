@@ -20,16 +20,29 @@ def pretty_print_results(results):
     print(Fore.GREEN + 'results:' + Fore.RESET)
     print('')
     table = PrettyTable(['method', 'time_avg', 'time_mean', 'time_mean_dev', 'iou_avg', 'iou_mean', 'iou_mean_dev'])
-    for (bench_name, bench_avg, bench_maen, beanch_mean_dev), (iou_avg, iou_mean, iou_mean_dev) in results:
+    for (bench_name, bench_avg, bench_mean, bench_mean_dev), (iou_avg, iou_mean, iou_mean_dev) in results:
         table.add_row([
             bench_name,
             round(bench_avg, 3),
-            round(bench_maen, 3),
-            round(beanch_mean_dev, 3),
+            round(bench_mean, 3),
+            round(bench_mean_dev, 3),
             round(iou_avg, 3),
             round(iou_mean, 3),
             round(iou_mean_dev, 3)])
     print(table)
+
+    print('')
+
+    print(Fore.GREEN + 'latex table code:' + Fore.RESET)
+    for (bench_name, bench_avg, bench_mean, bench_mean_dev), (iou_avg, iou_mean, iou_mean_dev) in results:
+        print(
+            bench_name + ' & ' +
+            str(round(bench_avg, 3)) + ' & ' +
+            str(round(bench_mean, 3)) + ' & ' +
+            str(round(bench_mean_dev, 3)) + ' & ' +
+            str(round(iou_avg, 3)) + ' & ' +
+            str(round(iou_mean, 3)) + ' & ' +
+            str(round(iou_mean_dev, 3)) + ' \\\\')
 
 
 # generates output images for this method
