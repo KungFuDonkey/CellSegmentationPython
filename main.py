@@ -92,7 +92,11 @@ if __name__ == '__main__':
 
     # generate data
     cv_images = opencv_tools.find_opencv_images('dataset//rawimages')
-    ground_truths = opencv_tools.make_binary_images(opencv_tools.find_opencv_images('dataset//groundtruth_png'))
+    ground_truths = opencv_tools.find_opencv_images('dataset//groundtruth_png')
+
+    opencv_tools.augment_images(cv_images, ground_truths)
+
+    ground_truths_bin = opencv_tools.make_binary_images(ground_truths)
     test_images = []
     test_ground_truth = []
     for index in RANDOM_TEST_INDEXES:
@@ -113,19 +117,19 @@ if __name__ == '__main__':
         train_images.append(cv_images[i])
         train_ground_truth.append(ground_truths[i])
 
-    # create and train unet models
-    NTL = unet.create_models()
-    unet.train_models(NTL, train_images, train_ground_truth, validation_images, validation_ground_truth)
-
-    # run multiple tests (right now only return benches)
-    test_results = \
-        [
-            run_tests_for_method(lambda image : unet.predict(NTL, 0, image), NTL.models_params[0]["model_name"], test_images, test_ground_truth),
-            run_tests_for_method(lambda image : unet.predict(NTL, 1, image), NTL.models_params[1]["model_name"], test_images, test_ground_truth),
-            run_tests_for_method(lambda image : unet.predict(NTL, 2, image), NTL.models_params[2]["model_name"], test_images, test_ground_truth),
-            run_tests_for_method(lambda image : unet.predict(NTL, 3, image), NTL.models_params[3]["model_name"], test_images, test_ground_truth),
-            run_tests_for_method(lambda image : unet.predict(NTL, 4, image), NTL.models_params[4]["model_name"], test_images, test_ground_truth),
-            run_tests_for_method(watershed.apply_watershed, 'Watershed', test_images, test_ground_truth),
-            run_tests_for_method(watershed.apply_watershed, 'Watershed full', cv_images, ground_truths)
-        ]
-    pretty_print_results(test_results)
+    # # create and train unet models
+    # NTL = unet.create_models()
+    # unet.train_models(NTL, train_images, train_ground_truth, validation_images, validation_ground_truth)
+    #
+    # # run multiple tests (right now only return benches)
+    # test_results = \
+    #     [
+    #         run_tests_for_method(lambda image : unet.predict(NTL, 0, image), NTL.models_params[0]["model_name"], test_images, test_ground_truth),
+    #         run_tests_for_method(lambda image : unet.predict(NTL, 1, image), NTL.models_params[1]["model_name"], test_images, test_ground_truth),
+    #         run_tests_for_method(lambda image : unet.predict(NTL, 2, image), NTL.models_params[2]["model_name"], test_images, test_ground_truth),
+    #         run_tests_for_method(lambda image : unet.predict(NTL, 3, image), NTL.models_params[3]["model_name"], test_images, test_ground_truth),
+    #         run_tests_for_method(lambda image : unet.predict(NTL, 4, image), NTL.models_params[4]["model_name"], test_images, test_ground_truth),
+    #         run_tests_for_method(watershed.apply_watershed, 'Watershed', test_images, test_ground_truth),
+    #         run_tests_for_method(watershed.apply_watershed, 'Watershed full', cv_images, ground_truths)
+    #     ]
+    # pretty_print_results(test_results)

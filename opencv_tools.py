@@ -1,7 +1,7 @@
 import cv2 as cv
 import os
 import numpy as np
-
+import random as rnd
 
 IMAGE_EXPORT_TYPE = '.bmp'
 
@@ -39,4 +39,68 @@ def export_image(cv_image, method_name, image_name):
 
 
 def make_binary_images(input_images):
-    return [(np.sum(image, axis=-1)>0).astype(int) for image in input_images]
+    return [(np.sum(image, axis=-1) > 0).astype(int) for image in input_images]
+
+
+def augment_images(raw_images, groundtruth_images):
+    for img in groundtruth_images:
+        [raw, _, _, _, _, rot, zoom] = augment_image(img)
+        cv.imshow('raw', np.float32(raw))
+        cv.imshow('rot', np.float32(rot))
+        cv.imshow('zoom', np.float32(zoom))
+        cv.waitKey(0)
+    return map(augment_image, groundtruth_images)
+
+
+def augment_image(raw_image):
+    return [
+        raw_image,
+        horizontal_shift(raw_image, 0.7),
+        vertical_shift(raw_image, 0.7),
+        horizontal_flip(raw_image),
+        vertical_flip(raw_image),
+        rotate(raw_image, 30),
+        zoom(raw_image, 0.5)
+    ]
+
+
+def horizontal_shift(img, max_shift=0.0):
+    if max_shift > 1 or max_shift < 0:
+        return img
+
+    h, w = img.shape[:2]
+    to_shift = w * rnd.uniform(-max_shift, max_shift)
+    trans_mat = np.float32([[1,0,to_shift],[0,1,0]])
+    return cv.warpAffine(img, trans_mat, (w,h))
+
+
+def vertical_shift(img, max_shift=0.0):
+    if max_shift > 1 or max_shift < 0:
+        return img
+
+    h, w = img.shape[:2]
+    to_shift = h * rnd.uniform(-max_shift, max_shift)
+    trans_mat = np.float32([[1, 0, 0], [0, 1, to_shift]])
+    return cv.warpAffine(img, trans_mat, (w, h))
+
+
+def horizontal_flip(img):
+    return cv.flip(img, 1)
+
+
+def vertical_flip(img):
+    return cv.flip(img, 0)
+
+
+def rotate(img, angle):
+    angle = int(rnd.uniform(-angle, angle))
+    h, w = img.shape[:2]
+    rot_mat = cv.getRotationMatrix2D(((w-1)/2.0, (h-1)/2.0), angle,1)
+    img = cv.warpAffine(img, rot_mat, (w, h))
+    return img
+
+
+def zoom(img, zoom):
+    h, w = img.shape[:2]
+    zoom_mat = cv.getRotationMatrix2D((w/2, h/2), 0, zoom)
+    return cv.warpAffine(img, zoom_mat, img.shape[1::-1], cv.INTER_LINEAR)
