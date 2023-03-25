@@ -9,20 +9,28 @@ import os
 
 def make_models_params():
     baseline_params = {"model_name": "Baseline_model",
-                       "backbone": 'efficientnetb3',
+                       "backbone": 'efficientnetb0',
                        "input_shape": (224, 224, 3),
                        "output_shape": (224, 224, 1),
-                       "train_epochs": 30,
+                       "train_epochs": 1,
                        "batch_size": 10,
                        "optimizer": Adam,  # has base learning rate of 0.001
                        "fine_tune_learning_rate": 1e-5,
                        "loss": sm.losses.bce_jaccard_loss,
                        "metrics": [sm.metrics.iou_score],
-                       "fine_tune_epochs": 10,
+                       "fine_tune_epochs": 1,
                        "early_stopping": tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                                           patience=10,
                                                                           verbose=1,
                                                                           restore_best_weights=True)}
+    efficientb3_params = copy.deepcopy(baseline_params)
+    efficientb3_params["model_name"] = "Efficientb3_model"
+    efficientb3_params["backbone"] = 'efficientnetb3'
+
+    efficientb7_params = copy.deepcopy(baseline_params)
+    efficientb7_params["model_name"] = "Efficientb7_model"
+    efficientb7_params["backbone"] = 'efficientnetb7'
+
     baseline512x640_params = copy.deepcopy(baseline_params)
     baseline512x640_params["model_name"] = "Baseline512x640_model"
     baseline512x640_params["input_shape"] = (512, 640, 3)
@@ -41,7 +49,7 @@ def make_models_params():
     mobilenet_params["model_name"] = "MobilenetV2_model"
     mobilenet_params["backbone"] = "mobilenetv2"
 
-    models_params = [baseline_params, baseline512x640_params, baseline1024x1280_params, focal_dice_params,
+    models_params = [baseline_params, baseline512x640_params, baseline1024x1280_params, efficientb3_params, efficientb7_params, focal_dice_params,
                      mobilenet_params]
 
     return models_params
