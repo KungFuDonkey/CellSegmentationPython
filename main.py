@@ -125,9 +125,9 @@ if __name__ == '__main__':
     # run multiple tests (right now only return benches)
     test_results = \
         [
-            run_tests_for_method(lambda image : unet.predict(NTL, 0, image), 'Baseline U-Net', test_images, test_ground_truth),
-            run_tests_for_method(lambda image : unet.predict(NTL, 1, image), 'Baseline U-Net', test_images, test_ground_truth),
-            run_tests_for_method(lambda image : unet.predict(NTL, 2, image), 'Baseline U-Net', test_images, test_ground_truth),
+            run_tests_for_method(lambda image : unet.predict(NTL, 0, image), NTL.models_params[0]["model_name"], test_images, test_ground_truth),
+            run_tests_for_method(lambda image : unet.predict(NTL, 1, image), NTL.models_params[1]["model_name"], test_images, test_ground_truth),
+            run_tests_for_method(lambda image : unet.predict(NTL, 2, image), NTL.models_params[2]["model_name"], test_images, test_ground_truth),
             run_tests_for_method(watershed.apply_watershed, 'Watershed', test_images, test_ground_truth),
             run_tests_for_method(watershed.apply_watershed, 'Watershed full', cv_images, ground_truths)
         ]
