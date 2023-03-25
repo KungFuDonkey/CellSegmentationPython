@@ -94,7 +94,7 @@ class NetworksTrainerLoader:
                 ft_history = self.__train_model(model, model_num, X_train, Y_train, X_valid, Y_valid, fine_tune=True,
                                                 initial_epoch=best_epoch + 1)
                 fine_tune_history = ft_history.history
-            self.JH.pickle_object(self.models_params[model_num]["history_path"], (history, fine_tune_history))
+            self.JH.pickle_object(self.models_params[model_num]["history_path"], (history.history, fine_tune_history))
             self.JH.pickle_object(self.models_params[model_num]["epochs_path"], best_epoch)
 
     def load_models(self):
