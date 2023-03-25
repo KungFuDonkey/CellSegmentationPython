@@ -1,9 +1,4 @@
 # This is a sample Python script.
-import copy
-import os.path
-import cv2 as cv
-import watershed
-import numpy as np
 import opencv_tools
 import intersection_over_union
 from benchmarker import BenchMarker
@@ -128,6 +123,8 @@ if __name__ == '__main__':
             run_tests_for_method(lambda image : unet.predict(NTL, 0, image), NTL.models_params[0]["model_name"], test_images, test_ground_truth),
             run_tests_for_method(lambda image : unet.predict(NTL, 1, image), NTL.models_params[1]["model_name"], test_images, test_ground_truth),
             run_tests_for_method(lambda image : unet.predict(NTL, 2, image), NTL.models_params[2]["model_name"], test_images, test_ground_truth),
+            run_tests_for_method(lambda image : unet.predict(NTL, 3, image), NTL.models_params[3]["model_name"], test_images, test_ground_truth),
+            run_tests_for_method(lambda image : unet.predict(NTL, 4, image), NTL.models_params[4]["model_name"], test_images, test_ground_truth),
             run_tests_for_method(watershed.apply_watershed, 'Watershed', test_images, test_ground_truth),
             run_tests_for_method(watershed.apply_watershed, 'Watershed full', cv_images, ground_truths)
         ]

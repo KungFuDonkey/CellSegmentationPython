@@ -12,13 +12,13 @@ def make_models_params():
                        "backbone": 'efficientnetb3',
                        "input_shape": (224, 224, 3),
                        "output_shape": (224, 224, 1),
-                       "train_epochs": 30,
+                       "train_epochs": 1,
                        "batch_size": 10,
                        "optimizer": Adam,  # has base learning rate of 0.001
                        "fine_tune_learning_rate": 1e-5,
                        "loss": sm.losses.bce_jaccard_loss,
                        "metrics": [sm.metrics.iou_score],
-                       "fine_tune_epochs": 10,
+                       "fine_tune_epochs": 1,
                        "early_stopping": tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                                                           patience=10,
                                                                           verbose=1,
@@ -54,6 +54,10 @@ def create_models():
 
 def train_models(NTL, train_images, train_ground_truth, validation_images, validation_ground_truth):
     if os.path.isdir('./saved_networks'):
+        for i in range(len(NTL.models_params)):
+            if os.path.isdir(os.path.join('./saved_networks', NTL.models_params[i]["model_name"])):
+                continue
+            NTL.train_models([i], train_images, train_ground_truth, validation_images, validation_ground_truth)
         NTL.load_models()
         return
 
