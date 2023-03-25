@@ -11,7 +11,7 @@ class NetworksTrainerLoader:
     def __init__(self, models_params):
         self.JH = JsonHelper()
         self.histories = []
-        self.fine_tune_histories =[]
+        self.fine_tune_histories = []
         self.best_epochs = []
         self.trained_models = []
         self.models_params = models_params
@@ -22,6 +22,15 @@ class NetworksTrainerLoader:
                 filepath=self.models_params[i]["model_path"], verbose=1, save_weights_only=True,
                 save_best_only=True)
             self.models_params[i]["epochs_path"] = "./saved_networks/" + models_params[i]["model_name"] + "/epochs"
+            self.models_params[i]["tensor_board"] = tf.keras.callbacks.TensorBoard(
+                log_dir="./saved_networks/" + models_params[i]["model_name"] + "/tensor_board_logs",
+                write_images=True, write_steps_per_second=True)
+
+            """
+            After training, you can visualize the summary data in TensorBoard by running the following command in your terminal or command prompt:
+            tensorboard --logdir my_logs
+            This will start a local web server that you can access by opening your web browser and navigating to http://localhost:6006. From here, you can view the training progress, including metrics such as the loss and accuracy, and visualizations such as histograms of weights and biases.
+            """
 
     def __compile_models(self, model_numbers):
         compiled_models = []
@@ -69,7 +78,8 @@ class NetworksTrainerLoader:
                             batch_size=self.models_params[model_num]["batch_size"],
                             validation_data=(X_valid_, Y_valid_), verbose=1,
                             callbacks=[self.models_params[model_num]["checkpoint"],
-                                       self.models_params[model_num]["early_stopping"]],
+                                       self.models_params[model_num]["early_stopping"],
+                                       self.models_params[model_num]["tensor_board"]],
                             initial_epoch=initial_epoch)
         return history
 
