@@ -42,45 +42,45 @@ def make_binary_images(input_images):
     return [(np.sum(image, axis=-1) > 0).astype(int) for image in input_images]
 
 
-def augment_images(raw_images, groundtruth_images):
-    for img in groundtruth_images:
-        [raw, _, _, _, _, rot, zoom] = augment_image(img)
-        cv.imshow('raw', np.float32(raw))
-        cv.imshow('rot', np.float32(rot))
-        cv.imshow('zoom', np.float32(zoom))
-        cv.waitKey(0)
-    return map(augment_image, groundtruth_images)
+def augment_images(raw_images, groundtruth_images, max_shift=0.7, max_angle=90, max_zoom_in=3, max_zoom_out=0.5):
+    augmented_raw = []
+    augmented_ground = []
+
+    # Augment every pair of (raw, groundtruth) with the same random transformation
+    for raw, ground in zip(raw_images, groundtruth_images):
+        rnd_shift = rnd.uniform(-max_shift, max_shift)
+        rnd_angle = int(rnd.uniform(-max_angle, max_angle))
+        rnd_zoom_in = rnd.uniform(1, max_zoom_in)
+        rnd_zoom_out = rnd.uniform(max_zoom_out, 1)
+
+        augmented_raw.append(augment_image(raw, rnd_shift, rnd_angle, rnd_zoom_in, rnd_zoom_out))
+        augmented_ground.append(augment_image(ground, rnd_shift, rnd_angle, rnd_zoom_in, rnd_zoom_out))
+    return np.array(augmented_raw).flatten(), np.array(augmented_ground).flatten()
 
 
-def augment_image(raw_image):
+# Turns a single image into 8 images (including the original)
+def augment_image(img, shift, angle, zoom_in, zoom_out):
     return [
-        raw_image,
-        horizontal_shift(raw_image, 0.7),
-        vertical_shift(raw_image, 0.7),
-        horizontal_flip(raw_image),
-        vertical_flip(raw_image),
-        rotate(raw_image, 30),
-        zoom(raw_image, 0.5)
+        img,
+        horizontal_shift(img, shift),
+        vertical_shift(img, shift),
+        horizontal_flip(img),
+        vertical_flip(img),
+        rotate(img, angle),
+        zoom(img, zoom_in),
+        zoom(img, zoom_out)
     ]
 
 
-def horizontal_shift(img, max_shift=0.0):
-    if max_shift > 1 or max_shift < 0:
-        return img
-
+def horizontal_shift(img, shift):
     h, w = img.shape[:2]
-    to_shift = w * rnd.uniform(-max_shift, max_shift)
-    trans_mat = np.float32([[1,0,to_shift],[0,1,0]])
-    return cv.warpAffine(img, trans_mat, (w,h))
+    trans_mat = np.float32([[1, 0, w * shift], [0, 1, 0]])
+    return cv.warpAffine(img, trans_mat, (w, h))
 
 
-def vertical_shift(img, max_shift=0.0):
-    if max_shift > 1 or max_shift < 0:
-        return img
-
+def vertical_shift(img, shift):
     h, w = img.shape[:2]
-    to_shift = h * rnd.uniform(-max_shift, max_shift)
-    trans_mat = np.float32([[1, 0, 0], [0, 1, to_shift]])
+    trans_mat = np.float32([[1, 0, 0], [0, 1, h * shift]])
     return cv.warpAffine(img, trans_mat, (w, h))
 
 
@@ -93,14 +93,13 @@ def vertical_flip(img):
 
 
 def rotate(img, angle):
-    angle = int(rnd.uniform(-angle, angle))
     h, w = img.shape[:2]
-    rot_mat = cv.getRotationMatrix2D(((w-1)/2.0, (h-1)/2.0), angle,1)
+    rot_mat = cv.getRotationMatrix2D((w / 2, h / 2), angle, 1)
     img = cv.warpAffine(img, rot_mat, (w, h))
     return img
 
 
 def zoom(img, zoom):
     h, w = img.shape[:2]
-    zoom_mat = cv.getRotationMatrix2D((w/2, h/2), 0, zoom)
+    zoom_mat = cv.getRotationMatrix2D((w / 2, h / 2), 0, zoom)
     return cv.warpAffine(img, zoom_mat, img.shape[1::-1], cv.INTER_LINEAR)

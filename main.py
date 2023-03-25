@@ -94,7 +94,10 @@ if __name__ == '__main__':
     cv_images = opencv_tools.find_opencv_images('dataset//rawimages')
     ground_truths = opencv_tools.find_opencv_images('dataset//groundtruth_png')
 
-    opencv_tools.augment_images(cv_images, ground_truths)
+    # Augment the images, turning 1 image into 8 images.
+    # augmented_raw, augmented_ground = opencv_tools.augment_images(cv_images, ground_truths)
+    # for img in augmented_ground:
+    #     opencv_tools.display_image(img)
 
     ground_truths_bin = opencv_tools.make_binary_images(ground_truths)
     test_images = []
