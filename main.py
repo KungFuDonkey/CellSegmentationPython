@@ -1,3 +1,9 @@
+# This is a sample Python script.
+import copy
+import os.path
+import cv2 as cv
+import watershed
+import numpy as np
 import opencv_tools
 import intersection_over_union
 from benchmarker import BenchMarker
