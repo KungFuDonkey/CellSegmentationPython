@@ -104,13 +104,13 @@ if __name__ == '__main__':
     test_ground_truth = []
     for index in RANDOM_TEST_INDEXES:
         test_images.append(cv_images[index])
-        test_ground_truth.append(ground_truths[index])
+        test_ground_truth.append(ground_truths_bin[index])
 
     validation_images = []
     validation_ground_truth = []
     for index in RANDOM_VALIDATION_INDEXES:
         validation_images.append(cv_images[index])
-        validation_ground_truth.append(ground_truths[index])
+        validation_ground_truth.append(ground_truths_bin[index])
 
     train_images = []
     train_ground_truth = []
@@ -120,9 +120,11 @@ if __name__ == '__main__':
         train_images.append(cv_images[i])
         train_ground_truth.append(ground_truths[i])
 
+    augmented_images, augmented_ground_truths = opencv_tools.augment_images(train_images, train_ground_truth)
+
     # create and train unet models
     NTL = unet.create_models()
-    unet.train_models(NTL, train_images, train_ground_truth, validation_images, validation_ground_truth)
+    unet.train_models(NTL, augmented_images, opencv_tools.make_binary_images(augmented_ground_truths), validation_images, validation_ground_truth)
 
     # run multiple tests (right now only return benches)
     test_results = \
