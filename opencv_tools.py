@@ -3,7 +3,7 @@ import os
 import numpy as np
 import random as rnd
 
-IMAGE_EXPORT_TYPE = '.bmp'
+IMAGE_EXPORT_TYPE = '.png'
 
 
 # finds images from the folder

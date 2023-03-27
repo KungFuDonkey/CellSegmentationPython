@@ -5,7 +5,7 @@ import sys
 import statistics
 
 NUMBER_OF_BENCHMARKS_PER_INPUT = 1
-WARMUP_ROUNDS = 1000
+WARMUP_ROUNDS = 50
 
 
 class BenchMarker:

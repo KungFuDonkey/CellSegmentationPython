@@ -47,7 +47,7 @@ def generate_output_images(method, method_name, cv_images):
     output_images = []
     for i in tqdm.tqdm(range(len(cv_images)), file=sys.stdout):
         output = method(cv_images[i])
-        opencv_tools.export_image(output, method_name, str(i))
+        opencv_tools.export_image(output * 255, method_name, str(i))
         output_images.append(output)
 
     return output_images
@@ -137,6 +137,6 @@ if __name__ == '__main__':
             run_tests_for_method(lambda image : unet.predict(NTL, 5, image), NTL.models_params[5]["model_name"], test_images, test_ground_truth),
             run_tests_for_method(lambda image : unet.predict(NTL, 6, image), NTL.models_params[6]["model_name"], test_images, test_ground_truth),
             run_tests_for_method(watershed.apply_watershed, 'Watershed', test_images, test_ground_truth),
-            run_tests_for_method(watershed.apply_watershed, 'Watershed full', cv_images, ground_truths)
+            run_tests_for_method(watershed.apply_watershed, 'Watershed full', cv_images, ground_truths_bin)
         ]
     pretty_print_results(test_results)
