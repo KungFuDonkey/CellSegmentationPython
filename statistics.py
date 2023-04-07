@@ -7,16 +7,20 @@ def get_stats(values):
     values_length = len(values)
     half_index = int(len(values) / 2)
     if values_length % 2 == 1:
-        mean = (values[half_index] + values[half_index + 1]) / 2
+        median = (values[half_index] + values[half_index + 1]) / 2
     else:
-        mean = values[half_index]
+        median = values[half_index]
+
+    mean = sum(values) / values_length
+
+    protected_mean = sum(values[1:(len(values)-1)]) / (values_length - 2)
+
+    mode = max(values)
 
     mean_deviation = 0
-    for average in values:
-        mean_deviation += abs(mean - average)
+    for value in values:
+        mean_deviation += abs(mean - value)
 
     mean_deviation = mean_deviation / values_length
 
-    average = sum(values) / values_length
-
-    return average, mean, mean_deviation
+    return mean, median, mean_deviation, mode, protected_mean

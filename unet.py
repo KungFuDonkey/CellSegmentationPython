@@ -36,10 +36,10 @@ def make_models_params():
     baseline512x640_params["input_shape"] = (512, 640, 3)
     baseline512x640_params["output_shape"] = (512, 640, 1)
 
-    baseline1024x1280_params = copy.deepcopy(baseline_params)
-    baseline1024x1280_params["model_name"] = "Baseline1024x1280_model"
-    baseline1024x1280_params["input_shape"] = (1024, 1280, 3)
-    baseline1024x1280_params["output_shape"] = (1024, 1280, 1)
+    #baseline1024x1280_params = copy.deepcopy(baseline_params)
+    #baseline1024x1280_params["model_name"] = "Baseline1024x1280_model"
+    #baseline1024x1280_params["input_shape"] = (1024, 1280, 3)
+    #baseline1024x1280_params["output_shape"] = (1024, 1280, 1)
 
     focal_dice_params = copy.deepcopy(baseline_params)
     focal_dice_params["model_name"] = "Focal_dice_model"
@@ -49,7 +49,7 @@ def make_models_params():
     mobilenet_params["model_name"] = "MobilenetV2_model"
     mobilenet_params["backbone"] = "mobilenetv2"
 
-    models_params = [baseline_params, baseline512x640_params, baseline1024x1280_params, efficientb3_params, efficientb7_params, focal_dice_params,
+    models_params = [baseline_params, baseline512x640_params, efficientb3_params, efficientb7_params, focal_dice_params,
                      mobilenet_params]
 
     return models_params

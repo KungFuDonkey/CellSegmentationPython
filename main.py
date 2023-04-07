@@ -15,14 +15,12 @@ import watershed
 def pretty_print_results(results):
     print(Fore.GREEN + 'results:' + Fore.RESET)
     print('')
-    table = PrettyTable(['method', 'time_avg', 'time_mean', 'time_mean_dev', 'iou_avg', 'iou_mean', 'iou_mean_dev'])
-    for (bench_name, bench_avg, bench_mean, bench_mean_dev), (iou_avg, iou_mean, iou_mean_dev) in results:
+    table = PrettyTable(['method', 'time_mean', 'time_mean_dev',  'iou_mean', 'iou_mean_dev'])
+    for (bench_name, bench_mean, bench_median, bench_mean_dev, bench_mode, bench_protected_mean), (iou_mean, iou_median, iou_mean_dev, iou_mode, iou_protected_mean) in results:
         table.add_row([
             bench_name,
-            round(bench_avg, 3),
             round(bench_mean, 3),
             round(bench_mean_dev, 3),
-            round(iou_avg, 3),
             round(iou_mean, 3),
             round(iou_mean_dev, 3)])
     print(table)
@@ -30,13 +28,11 @@ def pretty_print_results(results):
     print('')
 
     print(Fore.GREEN + 'latex table code:' + Fore.RESET)
-    for (bench_name, bench_avg, bench_mean, bench_mean_dev), (iou_avg, iou_mean, iou_mean_dev) in results:
+    for (bench_name, bench_mean, bench_median, bench_mean_dev, _, _), (iou_mean, iou_median, iou_mean_dev, _, _) in results:
         print(
             bench_name + ' & ' +
-            str(round(bench_avg, 3)) + ' & ' +
             str(round(bench_mean, 3)) + ' & ' +
             str(round(bench_mean_dev, 3)) + ' & ' +
-            str(round(iou_avg, 3)) + ' & ' +
             str(round(iou_mean, 3)) + ' & ' +
             str(round(iou_mean_dev, 3)) + ' \\\\')
 
@@ -124,19 +120,18 @@ if __name__ == '__main__':
 
     # create and train unet models
     NTL = unet.create_models()
-    unet.train_models(NTL, augmented_images, opencv_tools.make_binary_images(augmented_ground_truths), validation_images, validation_ground_truth)
+    unet.train_models(NTL, train_images, opencv_tools.make_binary_images(train_ground_truth), validation_images, validation_ground_truth)
 
     # run multiple tests (right now only return benches)
     test_results = \
         [
-            run_tests_for_method(lambda image : unet.predict(NTL, 0, image), NTL.models_params[0]["model_name"], test_images, test_ground_truth),
-            run_tests_for_method(lambda image : unet.predict(NTL, 1, image), NTL.models_params[1]["model_name"], test_images, test_ground_truth),
-            run_tests_for_method(lambda image : unet.predict(NTL, 2, image), NTL.models_params[2]["model_name"], test_images, test_ground_truth),
-            run_tests_for_method(lambda image : unet.predict(NTL, 3, image), NTL.models_params[3]["model_name"], test_images, test_ground_truth),
-            run_tests_for_method(lambda image : unet.predict(NTL, 4, image), NTL.models_params[4]["model_name"], test_images, test_ground_truth),
-            run_tests_for_method(lambda image : unet.predict(NTL, 5, image), NTL.models_params[5]["model_name"], test_images, test_ground_truth),
-            run_tests_for_method(lambda image : unet.predict(NTL, 6, image), NTL.models_params[6]["model_name"], test_images, test_ground_truth),
-            run_tests_for_method(watershed.apply_watershed, 'Watershed', test_images, test_ground_truth),
+            run_tests_for_method(lambda image : unet.predict(NTL, 0, image), NTL.models_params[0]["model_name"], validation_images, validation_ground_truth),
+            run_tests_for_method(lambda image : unet.predict(NTL, 1, image), NTL.models_params[1]["model_name"], validation_images, validation_ground_truth),
+            run_tests_for_method(lambda image : unet.predict(NTL, 2, image), NTL.models_params[2]["model_name"], validation_images, validation_ground_truth),
+            run_tests_for_method(lambda image : unet.predict(NTL, 3, image), NTL.models_params[3]["model_name"], validation_images, validation_ground_truth),
+            run_tests_for_method(lambda image : unet.predict(NTL, 4, image), NTL.models_params[4]["model_name"], validation_images, validation_ground_truth),
+            run_tests_for_method(lambda image : unet.predict(NTL, 5, image), NTL.models_params[5]["model_name"], validation_images, validation_ground_truth),
+            run_tests_for_method(watershed.apply_watershed, 'Watershed', validation_images, validation_ground_truth),
             run_tests_for_method(watershed.apply_watershed, 'Watershed full', cv_images, ground_truths_bin)
         ]
     pretty_print_results(test_results)
